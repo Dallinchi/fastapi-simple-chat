@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+<body>
+    <h1>Worked!</h1>
+
+    <button id="sendButton">Отправить сообщение</button>
+</body>
+<script src="{{ url_for('static', path='/chat-web-socket.js') }}"></script>
+<script>
+    console.log(sessionStorage.getItem('token') + "Токен из сессии <<<");  // Обрабатываем ответ от сервера
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // Предотвращаем переход по адресу указанному в action
+        const formData = new FormData(this);
+        fetch('/token', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            sessionStorage.setItem('token', data.access_token);
+        });
+    });
+</script>
+</html>⏎   

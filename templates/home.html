@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+<body>
+    <h1>Worked!</h1>
+    <form id="loginForm" action="/token" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+        </div>
+        <button type="submit">Login</button>
+    </form>
+
+    <div class="users">
+        {% for user in users %}
+        
+
+        <a href="/chat?chat={{users[user]['user_id']}}">{{users[user]['username']}}</a>
+
+        {% endfor%}
+    </div>
+</body>
+<script>
+    console.log(sessionStorage.getItem('token') + "Токен из сессии <<<");  // Обрабатываем ответ от сервера
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // Предотвращаем переход по адресу указанному в action
+        const formData = new FormData(this);
+        fetch('/token', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            sessionStorage.setItem('token', data.access_token);
+        });
+    });
+</script>
+</html>⏎   
