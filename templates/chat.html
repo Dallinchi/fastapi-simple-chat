@@ -3,26 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/chat.css') }}">
     <title>Chat</title>
 <body>
-    <h1>Worked!</h1>
-
-    <button id="sendButton">Отправить сообщение</button>
+    <h1>Chat</h1>
+    <div id="chat-container">
+       
+    </div>
+    <div id="chatForm">
+        <input id="textInput" type="text">
+        <!-- <button type="submit">></button> -->
+        <button id="sendButton">Отправить сообщение</button>
+    </div>
+    <!-- <form id="chatForm" action="/send-message/" method="post"> -->
+    <!-- </form> -->
 </body>
-<script src="{{ url_for('static', path='/chat-web-socket.js') }}"></script>
-<script>
-    console.log(sessionStorage.getItem('token') + "Токен из сессии <<<");  // Обрабатываем ответ от сервера
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-        event.preventDefault();  // Предотвращаем переход по адресу указанному в action
-        const formData = new FormData(this);
-        fetch('/token', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            sessionStorage.setItem('token', data.access_token);
-        });
-    });
-</script>
-</html>⏎   
+<script src="{{ url_for('static', path='/js/chat-web-socket.js') }}"></script>
+</html>

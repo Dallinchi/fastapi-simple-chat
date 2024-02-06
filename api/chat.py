@@ -47,9 +47,8 @@ async def websocket_endpoint(websocket: WebSocket, token, other_user_id: int):
                     
                     await client.send_json(message_data)
     except WebSocketDisconnect:
-        connected_clients[chat_id].remove(
-            websocket
-        )  # Удаляем клиента из списка при отключении
+        # Удаляем клиента из списка при отключении
+        connected_clients[chat_id].remove(websocket) 
 
 
 # Обработчик для отправки сообщения через вебсокет

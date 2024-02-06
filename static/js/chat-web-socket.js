@@ -3,7 +3,7 @@ console.log(urlParams)
 // Создаем новое соединение WebSocket
 const token = sessionStorage.getItem('token');
 
-const socket = new WebSocket('ws://' + window.location.host + '/ws?token=' + token + '&other_user_id=' + urlParams.chat, [], {
+const socket = new WebSocket('ws://' + window.location.host + '/ws?token=' + token + '&other_user_id=' + urlParams.id, [], {
   headers: {
     'Authorization': 'Bearer ' + token,
     'Custom-Header': 'custom_value'
@@ -47,7 +47,8 @@ socket.onmessage = function(event) {
   console.log('Получены данные: ' + receivedData);
 
   const newTextDiv = createDivWithText(receivedData.message); // Создаем div с текстом "Привет, мир!"
-  document.body.appendChild(newTextDiv); // Добавляем созданный div на страницу (в конец body)
+  chatContainer = document.getElementById('chat-container')
+  chatContainer.appendChild(newTextDiv)
 };
 
 // Обработчик события закрытия соединения
@@ -59,8 +60,7 @@ socket.onclose = function(event) {
 socket.onerror = function(error) {
   console.error('Произошла ошибка: ' + error.message);
 };
-
 document.getElementById('sendButton').addEventListener('click', function() {
-  const message = 'Привет, сервер!'; // Замените сообщение на свое
-  socket.send(JSON.stringify({ type: 'message', message: 'Привет!' }));
+  message = document.getElementById('textInput').value
+  socket.send(JSON.stringify({ type: 'message', message: message}));
 });

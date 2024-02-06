@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/users.css') }}">
+    <title>Users</title>
+
+<body>
+    <h1>Users</h1>
+    <div class="container">
+        <div class="users">
+            {% for user in users %}
+            <a href="/chat?id={{users[user]['user_id']}}">{{users[user]['username']}}</a>
+            <hr>
+            {% endfor%}
+        </div>
+    </div>
+</body>
+<script src="{{ url_for('static', path='/js/auth.js') }}"></script>
+
+</html>
