@@ -1,20 +1,15 @@
 var urlParams = ofUrl(window.location.href);
-console.log(urlParams)
+
 // Создаем новое соединение WebSocket
 const token = sessionStorage.getItem('token');
-
+const userData = JSON.parse(sessionStorage.getItem('user'));
+console.log(userData)
 const socket = new WebSocket('ws://' + window.location.host + '/api/ws?token=' + token, [], {
   headers: {
     'Authorization': 'Bearer ' + token,
     'Custom-Header': 'custom_value'
   }
 });
-
-// Отправка данных на сервер через WebSocket
-function sendDataToServer(data) {
-  socket.send(data);
-  socket.send(data);
-}
 
 function createDivWithText(text) {
   const div = document.createElement('div'); // Создаем новый элемент div
@@ -43,12 +38,22 @@ socket.onopen = function (event) {
 
 // Обработчик события получения сообщения
 socket.onmessage = function (event) {
+
   const receivedData = JSON.parse(event.data);
   console.log('Получены данные: ' + receivedData);
 
-  const newTextDiv = createDivWithText(receivedData.message); // Создаем div с текстом "Привет, мир!"
-  chatContainer = document.getElementById('chat-container')
-  chatContainer.appendChild(newTextDiv)
+  if (receivedData.sender_id == receivedData.reciver_id & receivedData.reciver_id == urlParams.id) {
+    const newTextDiv = createDivWithText(receivedData.message); // Создаем div с текстом "Привет, мир!"
+    chatContainer = document.getElementById('chat-container')
+    chatContainer.appendChild(newTextDiv)
+  } else {
+    if ((receivedData.sender_id == urlParams.id) || (receivedData.reciver_id == urlParams.id && userData.user_id != urlParams.id)) {
+      console.log(((receivedData.sender_id == urlParams.id) || (receivedData.reciver_id == urlParams.id && userData.user_id != urlParams.id)))
+      const newTextDiv = createDivWithText(receivedData.message); // Создаем div с текстом "Привет, мир!"
+      chatContainer = document.getElementById('chat-container')
+      chatContainer.appendChild(newTextDiv)
+    }
+  }
 };
 
 // Обработчик события закрытия соединения
@@ -60,6 +65,7 @@ socket.onclose = function (event) {
 socket.onerror = function (error) {
   console.error('Произошла ошибка: ' + error.message);
 };
+
 document.getElementById('sendButton').addEventListener('click', function () {
   message = document.getElementById('textInput').value
 

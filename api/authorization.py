@@ -13,7 +13,7 @@ from config import SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM
 fake_users_db = {
     "jacob": {
         "user_id": 1,
-        "username": "Jacob",
+        "username": "jacob",
         "full_name": "John Doe",
         "email": "johndoe@example.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
@@ -21,7 +21,7 @@ fake_users_db = {
     },
         "jose": {
         "user_id": 2,
-        "username": "Jose",
+        "username": "jose",
         "full_name": "John Doe",
         "email": "johndoe@example.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
@@ -29,7 +29,7 @@ fake_users_db = {
     },        
         "jane": {
         "user_id": 3,
-        "username": "Jane",
+        "username": "jane",
         "full_name": "John Doe",
         "email": "johndoe@example.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
@@ -39,7 +39,7 @@ fake_users_db = {
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
 
 connected_clients: dict = {}
 
@@ -148,7 +148,7 @@ async def websocket_endpoint(websocket: WebSocket, token):
         del connected_clients[user_id]
 
 
-@router.get("/users/me/", response_model=User)
+@router.get("/api/users/me/", response_model=User)
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
