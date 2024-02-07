@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -11,25 +11,25 @@ from config import SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM
 
 
 fake_users_db = {
-    "johndoe": {
-        "user_id": 2,
-        "username": "johndoe",
+    "jacob": {
+        "user_id": 1,
+        "username": "Jacob",
         "full_name": "John Doe",
         "email": "johndoe@example.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
         "disabled": False,
     },
-        "johndoe1": {
-        "user_id": 3,
-        "username": "johndoe",
+        "jose": {
+        "user_id": 2,
+        "username": "Jose",
         "full_name": "John Doe",
         "email": "johndoe@example.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
         "disabled": False,
     },        
-        "johndoe2": {
-        "user_id": 4,
-        "username": "johndoe",
+        "jane": {
+        "user_id": 3,
+        "username": "Jane",
         "full_name": "John Doe",
         "email": "johndoe@example.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
@@ -37,10 +37,11 @@ fake_users_db = {
     },
 }
 
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+connected_clients: dict = {}
 
 router = APIRouter()
 
@@ -107,7 +108,7 @@ async def get_current_active_user(
     return current_user
 
 
-@router.post("/token")
+@router.post("/api/token")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> Token:
@@ -128,20 +129,27 @@ async def login_for_access_token(
     )
     return Token(access_token=access_token, token_type="bearer")
 
+# Обработчик для подключения к веб-сокету
+@router.websocket("/api/ws")
+async def websocket_endpoint(websocket: WebSocket, token):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    user_id = payload.get("user_id")
+
+    await websocket.accept()
+
+    if not connected_clients.get(user_id):
+        connected_clients[user_id] = websocket
+
+    try:
+        while True:
+            data = await websocket.receive_json()
+    except WebSocketDisconnect:
+        # Удаляем клиента из списка при отключении
+        del connected_clients[user_id]
+
 
 @router.get("/users/me/", response_model=User)
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
     return current_user
-
-@router.post("/users/me/", response_model=User)
-async def read_users_me_test(current_user, current_user1):
-    return current_user
-
-
-@router.get("/users/me/items/")
-async def read_own_items(
-    current_user: Annotated[User, Depends(get_current_active_user)]
-):
-    return [{"item_id": "Foo", "owner": current_user.username}]

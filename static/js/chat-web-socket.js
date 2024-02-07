@@ -3,7 +3,7 @@ console.log(urlParams)
 // Создаем новое соединение WebSocket
 const token = sessionStorage.getItem('token');
 
-const socket = new WebSocket('ws://' + window.location.host + '/ws?token=' + token + '&other_user_id=' + urlParams.id, [], {
+const socket = new WebSocket('ws://' + window.location.host + '/api/ws?token=' + token, [], {
   headers: {
     'Authorization': 'Bearer ' + token,
     'Custom-Header': 'custom_value'
@@ -24,25 +24,25 @@ function createDivWithText(text) {
 
 function ofUrl(url) {
   var o = {};
-  
+
   var ms = url.match(/(\w+=[^&]+)/gi);
   if (ms) {
-    for(var i=0; i < ms.length; i++) { 
-        var v = ms[i].split("=");
-        o[v[0]] = v[1];
-        console.log(o)
+    for (var i = 0; i < ms.length; i++) {
+      var v = ms[i].split("=");
+      o[v[0]] = v[1];
+      console.log(o)
     }
   }
   return o;
 }
 
 // Обработчик события открытия соединения
-socket.onopen = function(event) {
+socket.onopen = function (event) {
   console.log('Соединение установлено');
 };
 
 // Обработчик события получения сообщения
-socket.onmessage = function(event) {
+socket.onmessage = function (event) {
   const receivedData = JSON.parse(event.data);
   console.log('Получены данные: ' + receivedData);
 
@@ -52,15 +52,40 @@ socket.onmessage = function(event) {
 };
 
 // Обработчик события закрытия соединения
-socket.onclose = function(event) {
+socket.onclose = function (event) {
   console.log('Соединение закрыто');
 };
 
 // Обработчик события ошибки
-socket.onerror = function(error) {
+socket.onerror = function (error) {
   console.error('Произошла ошибка: ' + error.message);
 };
-document.getElementById('sendButton').addEventListener('click', function() {
+document.getElementById('sendButton').addEventListener('click', function () {
   message = document.getElementById('textInput').value
-  socket.send(JSON.stringify({ type: 'message', message: message}));
+
+  const data = {
+    token: token,
+    reciver_user_id: urlParams.id,
+    message: message,
+  };
+
+  fetch('/api/send-message/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error('Network response was not ok.');
+    })
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => {
+      console.error('There has been a problem with your fetch operation:', error);
+    });
 });
