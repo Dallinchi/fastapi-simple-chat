@@ -40,16 +40,15 @@ socket.onopen = function (event) {
 socket.onmessage = function (event) {
 
   const receivedData = JSON.parse(event.data);
+  const newTextDiv = createDivWithText(receivedData.reciver_username + ": " +receivedData.message); // Создаем div с текстом полученым из ответа
   console.log('Получены данные: ' + receivedData);
 
   if (receivedData.sender_id == receivedData.reciver_id & receivedData.reciver_id == urlParams.id) {
-    const newTextDiv = createDivWithText(receivedData.message); // Создаем div с текстом "Привет, мир!"
     chatContainer = document.getElementById('chat-container')
     chatContainer.appendChild(newTextDiv)
   } else {
     if ((receivedData.sender_id == urlParams.id) || (receivedData.reciver_id == urlParams.id && userData.user_id != urlParams.id)) {
       console.log(((receivedData.sender_id == urlParams.id) || (receivedData.reciver_id == urlParams.id && userData.user_id != urlParams.id)))
-      const newTextDiv = createDivWithText(receivedData.message); // Создаем div с текстом "Привет, мир!"
       chatContainer = document.getElementById('chat-container')
       chatContainer.appendChild(newTextDiv)
     }
@@ -68,10 +67,11 @@ socket.onerror = function (error) {
 
 document.getElementById('sendButton').addEventListener('click', function () {
   message = document.getElementById('textInput').value
-
+  console.log(userData.username)
   const data = {
     token: token,
     reciver_user_id: urlParams.id,
+    reciver_username: userData.username,
     message: message,
   };
 
