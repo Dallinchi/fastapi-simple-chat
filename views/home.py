@@ -3,7 +3,6 @@ from fastapi.responses import HTMLResponse
 from fastapi import Request
 
 from templates import templates
-from api.authorization import fake_users_db
 
 router = APIRouter()
 
@@ -14,7 +13,6 @@ async def render_homepage(request: Request):
         "login.html",
         {
             "request": request,
-            "users": fake_users_db,
         },
     )
     
@@ -33,6 +31,5 @@ async def render_userspage(request: Request):
         "users.html",
         {
             "request": request,
-            "users": fake_users_db,
         },
     )

@@ -3,7 +3,9 @@ var urlParams = ofUrl(window.location.href);
 // Создаем новое соединение WebSocket
 const token = sessionStorage.getItem('token');
 const userData = JSON.parse(sessionStorage.getItem('user'));
-console.log(userData)
+console.log(" User Data -> " + userData);
+console.log(" User username -> " + userData.username);
+console.log(" User id -> " + userData);
 const socket = new WebSocket('ws://' + window.location.host + '/api/ws?token=' + token, [], {
   headers: {
     'Authorization': 'Bearer ' + token,
@@ -25,7 +27,6 @@ function ofUrl(url) {
     for (var i = 0; i < ms.length; i++) {
       var v = ms[i].split("=");
       o[v[0]] = v[1];
-      console.log(o)
     }
   }
   return o;
@@ -47,8 +48,7 @@ socket.onmessage = function (event) {
     chatContainer = document.getElementById('chat-container')
     chatContainer.appendChild(newTextDiv)
   } else {
-    if ((receivedData.sender_id == urlParams.id) || (receivedData.reciver_id == urlParams.id && userData.user_id != urlParams.id)) {
-      console.log(((receivedData.sender_id == urlParams.id) || (receivedData.reciver_id == urlParams.id && userData.user_id != urlParams.id)))
+    if ((receivedData.sender_id == urlParams.id) || (receivedData.reciver_id == urlParams.id && userData.id != urlParams.id)) {
       chatContainer = document.getElementById('chat-container')
       chatContainer.appendChild(newTextDiv)
     }
@@ -67,7 +67,6 @@ socket.onerror = function (error) {
 
 document.getElementById('sendButton').addEventListener('click', function () {
   message = document.getElementById('textInput').value
-  console.log(userData.username)
   const data = {
     token: token,
     reciver_user_id: urlParams.id,

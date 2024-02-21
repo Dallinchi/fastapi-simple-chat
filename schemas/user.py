@@ -10,13 +10,37 @@ class TokenData(BaseModel):
     username: str | None = None
 
 
-class User(BaseModel):
-    user_id: int
+class ItemBase(BaseModel):
+    title: str
+    description: str | None = None
+
+
+class ItemCreate(ItemBase):
+    pass
+
+
+class Item(ItemBase):
+    id: int
+    owner_id: int
+
+    class Config:
+        orm_mode = True
+
+
+class UserBase(BaseModel):
     username: str
-    email: str | None = None
-    full_name: str | None = None
+
+class UserCreate(UserBase):
+    password: str
+
+
+class User(UserBase):
+    id: int
     disabled: bool | None = None
-
-
-class UserInDB(User):
+    items: list[Item] = []
     hashed_password: str
+
+    class Config:
+        orm_mode = True
+
+# class UserInDB(User):
