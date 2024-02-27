@@ -65,8 +65,9 @@ socket.onerror = function (error) {
   console.error('Произошла ошибка: ' + error.message);
 };
 
-document.getElementById('sendButton').addEventListener('click', function () {
-  message = document.getElementById('textInput').value
+// Обработчик отправления сообщения(button or 'Enter')
+function sendMessage() {
+  const message = document.getElementById('textInput').value;
   const data = {
     token: token,
     reciver_user_id: urlParams.id,
@@ -81,16 +82,27 @@ document.getElementById('sendButton').addEventListener('click', function () {
     },
     body: JSON.stringify(data)
   })
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error('Network response was not ok.');
-    })
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => {
-      console.error('There has been a problem with your fetch operation:', error);
-    });
+  .then(response => {
+    if (response.ok) {
+      document.getElementById('textInput').value = "";
+      return response.json();
+    }
+    throw new Error('Network response was not ok.');
+  })
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('There has been a problem with your fetch operation:', error);
+  });
+}
+
+document.getElementById('sendButton').addEventListener('click', sendMessage);
+
+document.getElementById('textInput').addEventListener('keypress', function(event) {
+  if (event.key === "Enter") {
+    sendMessage();
+    event.preventDefault();
+  }
 });
+
