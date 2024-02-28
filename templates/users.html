@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', path='/css/users.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/notification.css') }}">
     <title>Users</title>
-
+</head>
 <body>
     <h1>Users</h1>
     <div class="container">
@@ -17,26 +18,9 @@
             {% endfor%}
         </div>
     </div>
+    <div id="popupContainer"></div>
 </body>
+<script src="{{ url_for('static', path='/js/notification.js') }}"></script>
+<script src="{{ url_for('static', path='/js/chat-web-socket.js') }}"></script>
 <script src="{{ url_for('static', path='/js/display-users.js') }}"></script>
-<script>
-  if ('serviceWorker' in navigator) {
-    // Проверяем, есть ли уже зарегистрированный Service Worker
-    navigator.serviceWorker.getRegistration().then(function(registration) {
-      if (!registration) {
-        // Если Service Worker не зарегистрирован, регистрируем его
-        navigator.serviceWorker.register('sw.js').then(function() {
-          console.log('Service Worker успешно зарегистрирован');
-        }).catch(function(error) {
-          console.error('Ошибка при регистрации Service Worker:', error);
-        });
-      } else {
-        console.log('Service Worker уже зарегистрирован');
-      }
-    });
-  } else {
-    console.log('Service Worker не поддерживается');
-  }
-</script>
-
 </html>

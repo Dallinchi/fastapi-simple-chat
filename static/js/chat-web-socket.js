@@ -60,6 +60,9 @@ socket.onmessage = function (event) {
     if ((receivedData.sender_id == urlParams.id) || (receivedData.reciver_id == urlParams.id && userData.id != urlParams.id)) {
       appendMessage(newTextDiv)
     }
+    else {
+      showPopup(receivedData.reciver_username + ": " +receivedData.message, 1000)
+    }
   }
 };
 
@@ -105,11 +108,3 @@ function sendMessage() {
   });
 }
 
-document.getElementById('sendButton').addEventListener('click', sendMessage);
-
-document.getElementById('textInput').addEventListener('keypress', function(event) {
-  if (event.key === "Enter") {
-    sendMessage();
-    event.preventDefault();
-  }
-});
