@@ -20,5 +20,24 @@
 </body>
 <script src="{{ url_for('static', path='/js/chat-web-socket.js') }}"></script>
 <script src="{{ url_for('static', path='/js/display-users.js') }}"></script>
-
+<script>
+  if ('serviceWorkr' in navigator) {
+    // Проверяем, есть ли уже зарегистрированный Service Worker
+    navigator.serviceWorker.getRegistration().then(function(registration) {
+      if (!registration) {
+        // Если Service Worker не зарегистрирован, регистрируем его
+        navigator.serviceWorker.register('sw.js').then(function() {
+          console.log('Service Worker успешно зарегистрирован');
+        }).catch(function(error) {
+          console.error('Ошибка при регистрации Service Worker:', error);
+        });
+      } else {
+        console.log('Service Worker уже зарегистрирован');
+      }
+    });
+  } else {
+    console.log('Service Worker не поддерживается');
+  }
+</script>
+e
 </html>
