@@ -1,7 +1,14 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    status,
+    WebSocket,
+    WebSocketDisconnect,
+)
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -29,16 +36,9 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-def get_user(db, username: str):
-    user = crud.get_user_by_username(db, username)
-    # if user is None:
-        # raise HTTPException(status_code=404, detail="User not found")
-    return user
-        # return User(**user_dict)
-
 
 def authenticate_user(db, username: str, password: str):
-    user = get_user(db, username)
+    user = crud.get_user_by_username(db, username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -57,7 +57,9 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -71,7 +73,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
         token_data = schemas.user.TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(db, username=token_data.username)
+    user = crud.get_user_by_username(db, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
@@ -87,7 +89,8 @@ async def get_current_active_user(
 
 @router.post("/api/token")
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],  db: Session = Depends(get_db)
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: Session = Depends(get_db),
 ) -> schemas.user.Token:
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
@@ -105,6 +108,7 @@ async def login_for_access_token(
         expires_delta=access_token_expires,
     )
     return schemas.user.Token(access_token=access_token, token_type="bearer")
+
 
 # Обработчик для подключения к веб-сокету
 @router.websocket("/api/ws")
@@ -131,6 +135,7 @@ async def read_users_me(
 ):
     return current_user
 
+
 @router.post("/api/users/", response_model=schemas.user.User)
 def create_user(user: schemas.user.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_username(db, username=user.username)
@@ -151,16 +156,3 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
-
-
-@router.post("/api/users/{user_id}/items/", response_model=schemas.user.Item)
-def create_item_for_user(
-    user_id: int, item: schemas.user.ItemCreate, db: Session = Depends(get_db)
-):
-    return crud.create_user_item(db=db, item=item, user_id=user_id)
-
-
-@router.get("/api/items/", response_model=list[schemas.user.Item])
-def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    items = crud.get_items(db, skip=skip, limit=limit)
-    return items

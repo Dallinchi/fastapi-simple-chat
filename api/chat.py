@@ -10,15 +10,8 @@ from config import SECRET_KEY, ALGORITHM
 
 router = APIRouter()
 
-
-def generate_chat_id(user1_id, user2_id):
-    sorted_ids = sorted([user1_id, user2_id])
-    chat_id = hashlib.md5(f"{sorted_ids[0]}-{sorted_ids[1]}".encode()).hexdigest()
-    return chat_id
-
-
 # Обработчик для отправки сообщения через вебсокет
-@router.post("/api/send-message/")
+@router.post("/api/send-message/", response_model=ResponseMessage)
 async def send_message(message: RequestMessage):
     payload = jwt.decode(message.token, SECRET_KEY, algorithms=[ALGORITHM])
     client_id = payload.get("user_id")
