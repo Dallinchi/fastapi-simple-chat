@@ -11,7 +11,7 @@ from config import SECRET_KEY, ALGORITHM
 router = APIRouter()
 
 # Обработчик для отправки сообщения через вебсокет
-@router.post("/api/send-message/", response_model=ResponseMessage)
+@router.post("/api/send-message/")
 async def send_message(message: RequestMessage):
     payload = jwt.decode(message.token, SECRET_KEY, algorithms=[ALGORITHM])
     client_id = payload.get("user_id")
