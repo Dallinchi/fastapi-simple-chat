@@ -37,6 +37,16 @@ socket.onopen = function (event) {
   console.log('Соединение установлено');
 };
 
+function appendMessage(newTextDiv) {
+  chatContainer = document.getElementById('chatContainer')
+  if (chatContainer.scrollHeight - chatContainer.clientHeight <= chatContainer.scrollTop + 1) {
+    chatContainer.appendChild(newTextDiv)
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  } else {
+    chatContainer.appendChild(newTextDiv)
+  }
+}
+
 // Обработчик события получения сообщения
 socket.onmessage = function (event) {
 
@@ -45,12 +55,10 @@ socket.onmessage = function (event) {
   console.log('Получены данные: ' + receivedData);
 
   if (receivedData.sender_id == receivedData.reciver_id & receivedData.reciver_id == urlParams.id) {
-    chatContainer = document.getElementById('chat-container')
-    chatContainer.appendChild(newTextDiv)
+    appendMessage(newTextDiv)
   } else {
     if ((receivedData.sender_id == urlParams.id) || (receivedData.reciver_id == urlParams.id && userData.id != urlParams.id)) {
-      chatContainer = document.getElementById('chat-container')
-      chatContainer.appendChild(newTextDiv)
+      appendMessage(newTextDiv)
     }
   }
 };
@@ -105,4 +113,3 @@ document.getElementById('textInput').addEventListener('keypress', function(event
     event.preventDefault();
   }
 });
-
