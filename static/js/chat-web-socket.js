@@ -6,7 +6,7 @@ const userData = JSON.parse(sessionStorage.getItem('user'));
 console.log(" User Data -> " + userData);
 console.log(" User username -> " + userData.username);
 console.log(" User id -> " + userData);
-const socket = new WebSocket('ws://' + window.location.host + '/api/ws?token=' + token, [], {
+const socket = new WebSocket('wss://' + window.location.host + '/api/ws?token=' + token, [], {
   headers: {
     'Authorization': 'Bearer ' + token,
     'Custom-Header': 'custom_value'

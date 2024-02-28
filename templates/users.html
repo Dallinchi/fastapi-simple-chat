@@ -18,10 +18,9 @@
         </div>
     </div>
 </body>
-<script src="{{ url_for('static', path='/js/chat-web-socket.js') }}"></script>
 <script src="{{ url_for('static', path='/js/display-users.js') }}"></script>
 <script>
-  if ('serviceWorkr' in navigator) {
+  if ('serviceWorker' in navigator) {
     // Проверяем, есть ли уже зарегистрированный Service Worker
     navigator.serviceWorker.getRegistration().then(function(registration) {
       if (!registration) {
