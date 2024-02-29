@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from schemas.user import UserCreate
+from schemas.user import UserCreate, User
 from schemas.chat import ChatCreate
 import models
 
@@ -31,13 +31,16 @@ def get_chats(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Chat).offset(skip).limit(limit).all()
 
 
-def create_chat(db: Session, chat: ChatCreate, users_id: list[int]):
+def create_chat(db: Session, chat: ChatCreate, user:User, usernames: list[str]):
     db_chat = models.Chat(**chat.dict())
-    for id in users_id:
-        user = get_user(db, id)
-        print('Пользоветель -> ', user.username)
-        db_chat.owners.append(user)
-        print(db_chat.owners)
+    usernames.append(user.username)
+    usernames = list(set(usernames))
+    for username in usernames:
+        user = get_user_by_username(db, username)
+        if user:
+            print('Пользоветель -> ', user.username)
+            db_chat.owners.append(user)
+            print(db_chat.owners)
         
     db.add(db_chat)
     db.commit()
