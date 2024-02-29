@@ -1,0 +1,22 @@
+.popup {
+    position: fixed;
+    top: 10%;
+    right: 0;
+    margin-right: 0;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    transform: translate(-50%, -50%);
+    background-color: rgba(21, 20, 35, 0.6);
+    backdrop-filter: blur(5px);
+    padding: 20px;
+    border-radius: 3px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
+
+.popup.hidden {
+    display: none;
+}
