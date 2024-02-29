@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from schemas.user import User
 
 class RequestMessage(BaseModel):
     token: str
@@ -14,3 +14,16 @@ class ResponseMessage(BaseModel):
     sender_id: int
     reciver_id: int
     reciver_username: str    
+    
+class ChatBase(BaseModel):
+    title: str
+
+class ChatCreate(ChatBase):
+    pass
+
+class Chat(ChatBase):
+    id: int
+    owner_id: int
+
+    class Config:
+        orm_mode = True

@@ -1,17 +1,18 @@
-import hashlib
-
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from jose import jwt
+from sqlalchemy.orm import Session
 
 from api.authorization import connected_clients
-from schemas.chat import RequestMessage, ResponseMessage
+from schemas.chat import RequestMessage, ResponseMessage, Chat, ChatCreate
 from config import SECRET_KEY, ALGORITHM
+from database import get_db
+import crud
 
 
 router = APIRouter()
 
 # Обработчик для отправки сообщения через вебсокет
-@router.post("/api/send-message/", response_model=ResponseMessage)
+@router.post("/api/send-message/")
 async def send_message(message: RequestMessage):
     payload = jwt.decode(message.token, SECRET_KEY, algorithms=[ALGORITHM])
     client_id = payload.get("user_id")
@@ -41,3 +42,13 @@ async def send_message(message: RequestMessage):
         await client.send_json(message_data)
 
     return {"detail": "Message sent successfully."}
+
+@router.post("/api/chats/")
+def create_chat(user_id:int, chat: ChatCreate, db: Session = Depends(get_db)):
+    return crud.Chat.create_chat(db=db, chat=chat, user_id=user_id)
+
+@router.get("/api/chats/")
+def read_chat(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    chats = crud.Chat.get_chats(db, skip=skip, limit=limit)
+    return chats
+

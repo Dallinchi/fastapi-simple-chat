@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 from config import SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM
 from database import get_db
-import crud, models, schemas
+import crud, schemas
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -38,7 +38,7 @@ def get_password_hash(password):
 
 
 def authenticate_user(db, username: str, password: str):
-    user = crud.get_user_by_username(db, username)
+    user = crud.User.get_user_by_username(db, username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -73,7 +73,7 @@ async def get_current_user(
         token_data = schemas.user.TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = crud.get_user_by_username(db, username=token_data.username)
+    user = crud.User.get_user_by_username(db, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
@@ -138,21 +138,21 @@ async def read_users_me(
 
 @router.post("/api/users/", response_model=schemas.user.User)
 def create_user(user: schemas.user.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_username(db, username=user.username)
+    db_user = crud.User.get_user_by_username(db, username=user.username)
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
-    return crud.create_user(db=db, user=user, hash_function=get_password_hash)
+    return crud.User.create_user(db=db, user=user, hash_function=get_password_hash)
 
 
 @router.get("/api/users/", response_model=list[schemas.user.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit)
+    users = crud.User.get_users(db, skip=skip, limit=limit)
     return users
 
 
 @router.get("/api/users/{user_id:int}", response_model=schemas.user.User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, user_id=user_id)
+    db_user = crud.User.get_user(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
