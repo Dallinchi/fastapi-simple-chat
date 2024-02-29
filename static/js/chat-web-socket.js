@@ -49,19 +49,31 @@ function appendMessage(newTextDiv) {
 
 // Обработчик события получения сообщения
 socket.onmessage = function (event) {
-
   const receivedData = JSON.parse(event.data);
-  const newTextDiv = createDivWithText(receivedData.reciver_username + ": " +receivedData.message); // Создаем div с текстом полученым из ответа
-  console.log('Получены данные: ' + receivedData);
 
-  if (receivedData.sender_id == receivedData.reciver_id & receivedData.reciver_id == urlParams.id) {
-    appendMessage(newTextDiv)
-  } else {
-    if ((receivedData.sender_id == urlParams.id) || (receivedData.reciver_id == urlParams.id && userData.id != urlParams.id)) {
+  if (receivedData.type == "personal-message") {
+    console.log('Получено личное сообщение');
+
+    const newText = receivedData.sender_username + ": " + receivedData.message;
+    const newTextDiv = createDivWithText(newText); // Создаем div с текстом полученым из ответа
+    const newNotification = newText;
+
+    if (receivedData.sender_id == urlParams.id) {
       appendMessage(newTextDiv)
+    } else {
+      showPopup(newNotification, 1000)
     }
-    else {
-      showPopup(receivedData.reciver_username + ": " +receivedData.message, 1000)
+  } else if (receivedData.type == "group-message") {
+    console.log('Получено групповое сообщение');
+
+    const newText = `${receivedData.sender_username}: ${receivedData.message}`;
+    const newTextDiv = createDivWithText(newText); // Создаем div с текстом полученым из ответа
+    const newNotification = `${receivedData.chat_title}(${receivedData.sender_username}): ${receivedData.message}`;
+
+    if (urlParams.type == "chat" && receivedData.chat_id == urlParams.id) {
+      appendMessage(newTextDiv)
+    } else {
+      showPopup(newNotification, 1000)
     }
   }
 };
