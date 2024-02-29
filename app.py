@@ -9,7 +9,7 @@ from views import router as views_router
 import models
 from database import SessionLocal, engine
 
-models.user.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.include_router(views_router)

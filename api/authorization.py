@@ -17,7 +17,8 @@ from sqlalchemy.orm import Session
 
 from config import SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM
 from database import get_db
-import crud, schemas
+from schemas.user import User, Token, TokenData, UserCreate
+import crud
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -38,7 +39,7 @@ def get_password_hash(password):
 
 
 def authenticate_user(db, username: str, password: str):
-    user = crud.User.get_user_by_username(db, username)
+    user = crud.get_user_by_username(db, username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -70,17 +71,17 @@ async def get_current_user(
         username = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = schemas.user.TokenData(username=username)
+        token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = crud.User.get_user_by_username(db, username=token_data.username)
+    user = crud.get_user_by_username(db, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
 
 
 async def get_current_active_user(
-    current_user: Annotated[schemas.user.User, Depends(get_current_user)]
+    current_user: Annotated[User, Depends(get_current_user)]
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
@@ -91,7 +92,7 @@ async def get_current_active_user(
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Session = Depends(get_db),
-) -> schemas.user.Token:
+) -> Token:
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -107,7 +108,7 @@ async def login_for_access_token(
         },
         expires_delta=access_token_expires,
     )
-    return schemas.user.Token(access_token=access_token, token_type="bearer")
+    return Token(access_token=access_token, token_type="bearer")
 
 
 # Обработчик для подключения к веб-сокету
@@ -129,30 +130,30 @@ async def websocket_endpoint(websocket: WebSocket, token):
         del connected_clients[user_id]
 
 
-@router.get("/api/users/me/", response_model=schemas.user.User)
+@router.get("/api/users/me/", response_model=User)
 async def read_users_me(
-    current_user: Annotated[schemas.user.User, Depends(get_current_active_user)]
+    current_user: Annotated[User, Depends(get_current_active_user)]
 ):
     return current_user
 
 
-@router.post("/api/users/", response_model=schemas.user.User)
-def create_user(user: schemas.user.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.User.get_user_by_username(db, username=user.username)
+@router.post("/api/users/", response_model=User)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_username(db, username=user.username)
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
-    return crud.User.create_user(db=db, user=user, hash_function=get_password_hash)
+    return crud.create_user(db=db, user=user, hash_function=get_password_hash)
 
 
-@router.get("/api/users/", response_model=list[schemas.user.User])
+@router.get("/api/users/", response_model=list[User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.User.get_users(db, skip=skip, limit=limit)
+    users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
 
-@router.get("/api/users/{user_id:int}", response_model=schemas.user.User)
+@router.get("/api/users/{user_id:int}", response_model=User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud.User.get_user(db, user_id=user_id)
+    db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user

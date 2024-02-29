@@ -1,5 +1,7 @@
 from pydantic import BaseModel
-from schemas.user import User
+from typing import List
+
+from schemas.user import UserChat
 
 class RequestMessage(BaseModel):
     token: str
@@ -13,7 +15,7 @@ class ResponseMessage(BaseModel):
     message: str
     sender_id: int
     reciver_id: int
-    reciver_username: str    
+    reciver_username: str
     
 class ChatBase(BaseModel):
     title: str
@@ -23,7 +25,8 @@ class ChatCreate(ChatBase):
 
 class Chat(ChatBase):
     id: int
-    owner_id: int
+    owners: List[UserChat]
 
     class Config:
         orm_mode = True
+

@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 
 class Token(BaseModel):
@@ -16,13 +17,16 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class UserChat(UserBase):
+    id: int
 
+from schemas.chat import Chat
 class User(UserBase):
     id: int
     disabled: bool | None = None
     hashed_password: str
-
+    chats: List[Chat] = []
+    
     class Config:
         orm_mode = True
 
-# class UserInDB(User):

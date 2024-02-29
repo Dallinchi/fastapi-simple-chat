@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends
-from jose import jwt
 from sqlalchemy.orm import Session
+from jose import jwt
 
 from api.authorization import connected_clients
-from schemas.chat import RequestMessage, ResponseMessage, Chat, ChatCreate
-from config import SECRET_KEY, ALGORITHM
+from models import Chat
+from schemas.chat import RequestMessage, ResponseMessage, ChatCreate, Chat
 from database import get_db
 import crud
-
+from config import SECRET_KEY, ALGORITHM
 
 router = APIRouter()
 
@@ -43,12 +43,14 @@ async def send_message(message: RequestMessage):
 
     return {"detail": "Message sent successfully."}
 
-@router.post("/api/chats/")
-def create_chat(user_id:int, chat: ChatCreate, db: Session = Depends(get_db)):
-    return crud.Chat.create_chat(db=db, chat=chat, user_id=user_id)
+@router.post("/api/users/{user_id}/chats/", response_model=Chat)
+def create_chat_for_user(
+    users_id: list[int], chat: ChatCreate, db: Session = Depends(get_db)
+):
+    return crud.create_chat(db=db, chat=chat, users_id=users_id)
 
-@router.get("/api/chats/")
-def read_chat(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    chats = crud.Chat.get_chats(db, skip=skip, limit=limit)
+
+@router.get("/api/chats/", response_model=list[Chat])
+def read_chats(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    chats = crud.get_chats(db, skip=skip, limit=limit)
     return chats
-
