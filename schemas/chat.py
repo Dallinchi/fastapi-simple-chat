@@ -3,19 +3,32 @@ from typing import List
 
 from schemas.user import UserChat
 
-class RequestMessage(BaseModel):
+class RequestPersonalMessage(BaseModel):
+    type: str = 'personal-message'
     token: str
-    reciver_user_id: int
-    reciver_username: str
+    sender_id: int
+    reciver_id: int
+    message: str
+    
+class RequestGroupMessage(BaseModel):
+    type: str = 'group-message'
+    token: str
+    sender_id: int
+    chat_id: str
     message: str
     
 
-class ResponseMessage(BaseModel):
-    type: str = 'message'
-    message: str
+class ResponsePersonalMessage(BaseModel):
+    type: str = 'personal-message'
     sender_id: int
     reciver_id: int
-    reciver_username: str
+    message: str
+
+class ResponseGroupMessage(BaseModel):
+    type: str = 'group-message'
+    message: str
+    sender_id: int
+    chat_id: int
     
 class ChatBase(BaseModel):
     title: str
