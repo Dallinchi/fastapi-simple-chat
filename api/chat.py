@@ -6,7 +6,7 @@ from jose import jwt
 
 from api.authorization import connected_clients, get_current_active_user
 from models import Chat
-from schemas.chat import RequestMessage, ResponseMessage, ChatCreate, Chat
+from schemas.chat import RequestPersonalMessage, ResponsePersonalMessage, ChatCreate, Chat
 from schemas.user import User
 from database import get_db
 import crud
@@ -16,11 +16,11 @@ router = APIRouter()
 
 # Обработчик для отправки сообщения через вебсокет
 @router.post("/api/send-message/")
-async def send_message(message: RequestMessage):
+async def send_message(message: RequestPersonalMessage):
     payload = jwt.decode(message.token, SECRET_KEY, algorithms=[ALGORITHM])
     client_id = payload.get("user_id")
-    sender_user_id = message.reciver_user_id
-    sender_username = message.reciver_username
+    sender_user_id = message.reciver_id
+    # sender_username = message.reciver_username # в новой схеме этого нет
 
     if not connected_clients.get(sender_user_id):
         return {"detail": "No connected clients for the chat."}
@@ -31,11 +31,11 @@ async def send_message(message: RequestMessage):
     client = connected_clients[client_id]
     other_client = connected_clients[sender_user_id]
 
-    message_data = ResponseMessage(
+    message_data = ResponsePersonalMessage(
         message=message.message,
         sender_id=client_id,
         reciver_id=sender_user_id,
-        sender_username=sender_username,
+        # sender_username=sender_username, # в новой схеме этого нет
     ).model_dump()
     
     if client_id != sender_user_id:
