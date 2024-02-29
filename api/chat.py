@@ -1,10 +1,13 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from jose import jwt
 
-from api.authorization import connected_clients
+from api.authorization import connected_clients, get_current_active_user
 from models import Chat
 from schemas.chat import RequestMessage, ResponseMessage, ChatCreate, Chat
+from schemas.user import User
 from database import get_db
 import crud
 from config import SECRET_KEY, ALGORITHM
@@ -32,7 +35,7 @@ async def send_message(message: RequestMessage):
         message=message.message,
         sender_id=client_id,
         reciver_id=sender_user_id,
-        reciver_username=sender_username,
+        sender_username=sender_username,
     ).model_dump()
     
     if client_id != sender_user_id:
@@ -43,11 +46,12 @@ async def send_message(message: RequestMessage):
 
     return {"detail": "Message sent successfully."}
 
-@router.post("/api/users/{user_id}/chats/", response_model=Chat)
+@router.post("/api/chats/", response_model=Chat)
 def create_chat_for_user(
-    users_id: list[int], chat: ChatCreate, db: Session = Depends(get_db)
+    current_user: Annotated[User, Depends(get_current_active_user)], usernames: list[str], chat: ChatCreate, db: Session = Depends(get_db),
 ):
-    return crud.create_chat(db=db, chat=chat, users_id=users_id)
+    current_user.id
+    return crud.create_chat(db=db, chat=chat, user=current_user, usernames=usernames)
 
 
 @router.get("/api/chats/", response_model=list[Chat])
