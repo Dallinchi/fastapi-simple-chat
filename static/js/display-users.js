@@ -15,7 +15,7 @@ async function displayUsers() {
         const userLink = document.createElement('a');
         userLink.textContent = user.username; // Устанавливаем текст элемента div равным переданному аргументу
         // /chat?id={{users[user]['user_id']}}
-        userLink.href = "/chat?id="+user.id; // Устанавливаем текст элемента div равным переданному аргументу
+        userLink.href = "/chat?type=personal&id="+user.id; // Устанавливаем текст элемента div равным переданному аргументу
         usersContainer.appendChild(userLink);
     });
 }
