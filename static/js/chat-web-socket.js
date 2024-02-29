@@ -31,17 +31,14 @@ function ofUrl(url) {
   }
   return o;
 }
-function getUsernameByUserId(id) {
-  jsonData = fetch('api/users/').json();
-  for (const user of jsonData) {
-    if (user.id === id) {
-      return user.username;
-    }
-  }
-  return null; // Если пользователь с таким айди не найден
+async function getUsernameByUserId(id) {
+  const response = await fetch(`/api/users/${id}`);
+  const jsonData = await response.json();
+  return jsonData.username;
 }
-function getTitleIdByChatId(id) {
-  jsonData = fetch('api/chats/').json();
+async function getTitleIdByChatId(id) {
+  const response = await fetch('/api/chats/');
+  const jsonData = await response.json();
   for (const chat of jsonData) {
     if (chat.title === usernaidme) {
       return chat.title;
@@ -66,14 +63,14 @@ function appendMessage(newTextDiv) {
 }
 
 // Обработчик события получения сообщения
-socket.onmessage = function (event) {
+socket.onmessage = async function (event) {
   const receivedData = JSON.parse(event.data);
 
   if (receivedData.type == "personal-message") {
     console.log('Получено личное сообщение');
 
     const sender_id = receivedData.sender_id;
-    const sender_username = getUsernameByUserId(sender_id);
+    const sender_username = await getUsernameByUserId(sender_id);
     const message = receivedData.message;
 
     const newText = sender_username + ": " + message;
@@ -89,7 +86,7 @@ socket.onmessage = function (event) {
     console.log('Получено групповое сообщение');
 
     const sender_id = receivedData.sender_id;
-    const sender_username = getUsernameByUserId(sender_id);
+    const sender_username = await getUsernameByUserId(sender_id);
     const chat_id = receivedData.chat_id;
     const chat_title = getTitleIdByChatId(chat_id);
     const message = receivedData.message;
@@ -98,7 +95,7 @@ socket.onmessage = function (event) {
     const newTextDiv = createDivWithText(newText); // Создаем div с текстом полученым из ответа
     const newNotification = `${chat_title}(${sender_username}): ${message}`;
 
-    if (urlParams.type == "chat" && chat_id == urlParams.id) {
+    if (urlParams.type == "group" && chat_id == urlParams.id) {
       appendMessage(newTextDiv)
     } else {
       showPopup(newNotification, 1000)
