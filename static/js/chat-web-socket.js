@@ -6,7 +6,7 @@ const userData = JSON.parse(sessionStorage.getItem('user'));
 console.log(" User Data -> " + userData);
 console.log(" User username -> " + userData.username);
 console.log(" User id -> " + userData);
-const socket = new WebSocket('ws://' + window.location.host + '/api/ws?token=' + token, [], {
+const socket = new WebSocket('wss://' + window.location.host + '/api/ws?token=' + token, [], {
   headers: {
     'Authorization': 'Bearer ' + token,
     'Custom-Header': 'custom_value'
@@ -37,6 +37,16 @@ socket.onopen = function (event) {
   console.log('Соединение установлено');
 };
 
+function appendMessage(newTextDiv) {
+  chatContainer = document.getElementById('chatContainer')
+  if (chatContainer.scrollHeight - chatContainer.clientHeight <= chatContainer.scrollTop + 1) {
+    chatContainer.appendChild(newTextDiv)
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  } else {
+    chatContainer.appendChild(newTextDiv)
+  }
+}
+
 // Обработчик события получения сообщения
 socket.onmessage = function (event) {
 
@@ -45,12 +55,13 @@ socket.onmessage = function (event) {
   console.log('Получены данные: ' + receivedData);
 
   if (receivedData.sender_id == receivedData.reciver_id & receivedData.reciver_id == urlParams.id) {
-    chatContainer = document.getElementById('chat-container')
-    chatContainer.appendChild(newTextDiv)
+    appendMessage(newTextDiv)
   } else {
     if ((receivedData.sender_id == urlParams.id) || (receivedData.reciver_id == urlParams.id && userData.id != urlParams.id)) {
-      chatContainer = document.getElementById('chat-container')
-      chatContainer.appendChild(newTextDiv)
+      appendMessage(newTextDiv)
+    }
+    else {
+      showPopup(receivedData.reciver_username + ": " +receivedData.message, 1000)
     }
   }
 };
@@ -96,13 +107,4 @@ function sendMessage() {
     console.error('There has been a problem with your fetch operation:', error);
   });
 }
-
-document.getElementById('sendButton').addEventListener('click', sendMessage);
-
-document.getElementById('textInput').addEventListener('keypress', function(event) {
-  if (event.key === "Enter") {
-    sendMessage();
-    event.preventDefault();
-  }
-});
 

@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', path='/css/chat.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/notification.css') }}">
     <title>Chat</title>
+</head>
 <body>
-    <h1>Chat</h1>
-    <div id="chat-container">
+    <div id="chatHead">
+        <h1>Chat</h1>
+    </div>
+    <div id="chatContainer">
        
     </div>
     <div id="chatForm">
         <input id="textInput" type="text">
         <button id="sendButton">Отправить сообщение</button>
     </div>
+    <div id="popupContainer"></div>
 </body>
+<script src="{{ url_for('static', path='/js/notification.js') }}"></script>
 <script src="{{ url_for('static', path='/js/chat-web-socket.js') }}"></script>
+<script src="{{ url_for('static', path='/js/chat-send-message.js') }}"></script>
 </html>
