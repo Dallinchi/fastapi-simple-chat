@@ -83,12 +83,12 @@ async def send_message(
 @router.post("/api/chats/", response_model=Chat)
 def create_chat_for_user(
     current_user: Annotated[User, Depends(get_current_active_user)],
-    usernames: list[str],
+    users_id: list[int],
     chat: ChatCreate,
     db: Session = Depends(get_db),
 ):
     current_user.id
-    return crud.create_chat(db=db, chat=chat, user=current_user, usernames=usernames)
+    return crud.create_chat(db=db, chat=chat, user=current_user, users_id=users_id)
 
 # Можно оставить для отлатки
 # @router.get("/api/chats/", response_model=list[Chat])

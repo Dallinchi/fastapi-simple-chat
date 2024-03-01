@@ -36,12 +36,12 @@ def get_chats(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Chat).offset(skip).limit(limit).all()
 
 
-def create_chat(db: Session, chat: ChatCreate, user:User, usernames: list[str]):
+def create_chat(db: Session, chat: ChatCreate, user:User, users_id: list[int]):
     db_chat = models.Chat(**chat.dict())
-    usernames.append(user.username)
-    usernames = list(set(usernames))
-    for username in usernames:
-        user = get_user_by_username(db, username)
+    users_id.append(user.id)
+    users_id = list(set(users_id))
+    for user_id in users_id:
+        user = get_user(db, user_id)
         if user:
             print('Пользоветель -> ', user.username)
             db_chat.owners.append(user)
