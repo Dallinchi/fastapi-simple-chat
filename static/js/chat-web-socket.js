@@ -77,7 +77,7 @@ socket.onmessage = async function (event) {
     const newTextDiv = createDivWithText(newText); // Создаем div с текстом полученым из ответа
     const newNotification = newText;
 
-    if (sender_id == urlParams.id) {
+    if (sender_id == urlParams.id || sender_id == userData.id) {
       appendMessage(newTextDiv)
     } else {
       showPopup(newNotification, 1000)
