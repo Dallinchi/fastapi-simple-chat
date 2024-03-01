@@ -42,3 +42,24 @@ body{
     color: azure;
     width: 10%;
 }
+.chats{
+    background-color: rgba(71, 71, 71, 0.267);
+    width: 50vw;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    text-align: center;
+}
+.chats a{
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: none;
+    color: azure;
+}
+.chats hr{
+    color: azure;
+    width: 10%;
+}

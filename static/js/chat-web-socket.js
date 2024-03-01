@@ -31,15 +31,14 @@ function ofUrl(url) {
   }
   return o;
 }
-async function getUsernameByUserId(id) {
-  const response = await fetch(`/api/users/${id}`);
+async function getUsernameByUserId(user_id) {
+  const response = await fetch(`/api/users/${user_id}`);
   const jsonData = await response.json();
   return jsonData.username;
 }
-async function getTitleByChatId(id) {
-  const response = await fetch(`/api/chats/${id}`);
-  const jsonData = await response.json();
-  return jsonData.title;
+function getTitleByChatId(chatId) {
+  const chat = userData.chats.find(chat => chat.id === chatId);
+  return chat ? chat.title : null;
 }
 
 // Обработчик события открытия соединения
