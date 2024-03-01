@@ -95,3 +95,11 @@ def create_chat_for_user(
 def read_chats(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     chats = crud.get_chats(db, skip=skip, limit=limit)
     return chats
+
+
+@router.get("/api/chats/{chat_id:int}", response_model=Chat)
+def read_user(chat_id: int, db: Session = Depends(get_db)):
+    db_chat = crud.get_chat(db, chat_id=chat_id)
+    if db_chat is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_chat
