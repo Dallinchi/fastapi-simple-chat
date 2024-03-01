@@ -90,15 +90,22 @@ def create_chat_for_user(
     current_user.id
     return crud.create_chat(db=db, chat=chat, user=current_user, usernames=usernames)
 
-
-@router.get("/api/chats/", response_model=list[Chat])
-def read_chats(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    chats = crud.get_chats(db, skip=skip, limit=limit)
-    return chats
+# Можно оставить для отлатки
+# @router.get("/api/chats/", response_model=list[Chat])
+# def read_chats(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+#     chats = crud.get_chats(db, skip=skip, limit=limit)
+#     return chats
 
 
 @router.get("/api/chats/{chat_id:int}", response_model=Chat)
-def read_user(chat_id: int, db: Session = Depends(get_db)):
+def read_user(chat_id: int, current_user: Annotated[User, Depends(get_current_active_user)], db: Session = Depends(get_db)):
+    user_chats_id = [chat.id for chat in current_user.chats]
+    if chat_id not in user_chats_id:        
+        raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Permission denied",
+                )
+
     db_chat = crud.get_chat(db, chat_id=chat_id)
     if db_chat is None:
         raise HTTPException(status_code=404, detail="User not found")
