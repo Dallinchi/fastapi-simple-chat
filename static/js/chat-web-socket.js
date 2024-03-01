@@ -36,15 +36,10 @@ async function getUsernameByUserId(id) {
   const jsonData = await response.json();
   return jsonData.username;
 }
-async function getTitleIdByChatId(id) {
-  const response = await fetch('/api/chats/');
+async function getTitleByChatId(id) {
+  const response = await fetch(`/api/chats/${id}`);
   const jsonData = await response.json();
-  for (const chat of jsonData) {
-    if (chat.title === usernaidme) {
-      return chat.title;
-    }
-  }
-  return null; // Если чат с таким айди не найден
+  return jsonData.title;
 }
 
 // Обработчик события открытия соединения
@@ -88,7 +83,7 @@ socket.onmessage = async function (event) {
     const sender_id = receivedData.sender_id;
     const sender_username = await getUsernameByUserId(sender_id);
     const chat_id = receivedData.chat_id;
-    const chat_title = getTitleIdByChatId(chat_id);
+    const chat_title = await getTitleByChatId(chat_id);
     const message = receivedData.message;
 
     const newText = `${sender_username}: ${message}`;
