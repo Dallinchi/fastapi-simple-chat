@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 from config import SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM
 from database import get_db
-from schemas.user import User, Token, TokenData, UserCreate
+from schemas.user import User, Token, TokenData, UserCreate, UserPublic
 import crud
 
 
@@ -145,13 +145,13 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user, hash_function=get_password_hash)
 
 
-@router.get("/api/users/", response_model=list[User])
+@router.get("/api/users/", response_model=list[UserPublic])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
 
-@router.get("/api/users/{user_id:int}", response_model=User)
+@router.get("/api/users/{user_id:int}", response_model=UserPublic)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
