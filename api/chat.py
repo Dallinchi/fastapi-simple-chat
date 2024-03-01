@@ -18,31 +18,31 @@ router = APIRouter()
 @router.post("/api/send-message/")
 async def send_message(message: RequestPersonalMessage):
     payload = jwt.decode(message.token, SECRET_KEY, algorithms=[ALGORITHM])
-    client_id = payload.get("user_id")
-    sender_user_id = message.reciver_id
+    sender_id = payload.get("user_id")
+    receiver_id = message.receiver_id
     # sender_username = message.reciver_username # в новой схеме этого нет
 
-    if not connected_clients.get(sender_user_id):
+    if not connected_clients.get(sender_id):
         return {"detail": "No connected clients for the chat."}
-    if not connected_clients.get(client_id):
+    if not connected_clients.get(receiver_id):
         return {"detail": "No connected clients for the chat."}
 
     # Отправляем сообщение клиенту
-    client = connected_clients[client_id]
-    other_client = connected_clients[sender_user_id]
+    sender = connected_clients[sender_id]
+    receiver = connected_clients[receiver_id]
 
     message_data = ResponsePersonalMessage(
         message=message.message,
-        sender_id=client_id,
-        reciver_id=sender_user_id,
+        sender_id=sender_id,
+        receiver_id=receiver_id,
         # sender_username=sender_username, # в новой схеме этого нет
     ).model_dump()
     
-    if client_id != sender_user_id:
-        await client.send_json(message_data)
-        await other_client.send_json(message_data)
+    if sender_id != receiver_id:
+        await sender.send_json(message_data)
+        await receiver.send_json(message_data)
     else:
-        await client.send_json(message_data)
+        await sender.send_json(message_data)
 
     return {"detail": "Message sent successfully."}
 

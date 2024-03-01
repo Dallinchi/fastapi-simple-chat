@@ -132,7 +132,7 @@ function sendMessage() {
       type: "personal-message",
       token: token,
       sender_id: userData.id,
-      reciver_id: urlParams.id,
+      receiver_id: urlParams.id,
       message: message,
     };
   }
