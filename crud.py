@@ -27,6 +27,11 @@ def create_user(db: Session, user: UserCreate, hash_function):
     db.refresh(db_user)
     return db_user
 
+
+def get_chat(db: Session, chat_id: int):
+    return db.query(models.Chat).filter(models.Chat.id == chat_id).first()
+
+
 def get_chats(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Chat).offset(skip).limit(limit).all()
 
