@@ -31,11 +31,7 @@ function ofUrl(url) {
   }
   return o;
 }
-async function getUsernameByUserId(user_id) {
-  const response = await fetch(`/api/users/${user_id}`);
-  const jsonData = await response.json();
-  return jsonData.username;
-}
+
 function getTitleByChatId(chatId) {
   const chat = userData.chats.find(chat => chat.id === chatId);
   return chat ? chat.title : null;
@@ -64,7 +60,7 @@ socket.onmessage = async function (event) {
     console.log('Получено личное сообщение');
 
     const sender_id = receivedData.sender_id;
-    const sender_username = await getUsernameByUserId(sender_id);
+    const sender_username = receivedData.sender_username;
     const message = receivedData.message;
 
     const newText = sender_username + ": " + message;
@@ -80,7 +76,7 @@ socket.onmessage = async function (event) {
     console.log('Получено групповое сообщение');
 
     const sender_id = receivedData.sender_id;
-    const sender_username = await getUsernameByUserId(sender_id);
+    const sender_username = receivedData.sender_username;
     const chat_id = receivedData.chat_id;
     const chat_title = await getTitleByChatId(chat_id);
     const message = receivedData.message;
