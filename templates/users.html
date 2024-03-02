@@ -6,21 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', path='/css/users.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='/css/notification.css') }}">
+    <link rel="icon" href="{{ url_for('static', path='/favicon.ico') }}" type="image/x-icon">
     <title>Users</title>
 </head>
 <body>
     <h1>Users</h1>
     <div class="container">
         <div class="users" id="users-container">
-            {% for user in users %}
-            <!-- <a href="/chat?id={{users[user]['user_id']}}">{{users[user]['username']}}</a> -->
-            <hr>
-            {% endfor%}
         </div>
+    </div>
+    <h1>Chats</h1>
+    <div class="container">
+        <div class="chats" id="chats-container">
+        </div>
+    </div>
+    <button class="add-button" onclick="openPopup()"><span>+</span></button>
+    <div id="popup" class="popup">
+      <div class="popup-content">
+        <input type="text" id="chatName" placeholder="Enter chat name">
+        <select id="userList" multiple>
+          <!-- Users will be populated here dynamically -->
+        </select>
+        <button onclick="sendChatRequest()">Create Chat</button>
+      </div>
     </div>
     <div id="popupContainer"></div>
 </body>
 <script src="{{ url_for('static', path='/js/notification.js') }}"></script>
 <script src="{{ url_for('static', path='/js/chat-web-socket.js') }}"></script>
 <script src="{{ url_for('static', path='/js/display-users.js') }}"></script>
+<script src="{{ url_for('static', path='/js/create-chat.js') }}"></script>
 </html>

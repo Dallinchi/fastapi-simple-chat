@@ -3,7 +3,7 @@ var popupQueue = [];
 
 function showPopup(message, duration) {
   var popup = document.createElement('div');
-  popup.className = 'popup';
+  popup.className = 'popupNotification';
   popup.textContent = message;
 
   if (popupQueue.length > 0) {

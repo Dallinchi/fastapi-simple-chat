@@ -46,6 +46,7 @@ async def send_message(
             message_data = ResponsePersonalMessage(
                 message=message.message,
                 sender_id=sender_id,
+                sender_username=crud.get_user(db, sender_id).username,
                 receiver_id=receiver_id,
                 # sender_username=sender_username, # в новой схеме этого нет
             ).model_dump()
@@ -61,6 +62,7 @@ async def send_message(
             message_data = ResponseGroupMessage(
                 message=message.message,
                 sender_id=sender_id,
+                sender_username=crud.get_user(db, sender_id).username,
                 chat_id=message.chat_id,
             ).model_dump()
 

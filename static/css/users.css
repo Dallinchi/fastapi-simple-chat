@@ -2,7 +2,7 @@
     box-sizing: border-box;
 }
 
-body{
+body {
     margin: 0;
     padding: 0;
     display: flex;
@@ -12,7 +12,7 @@ body{
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     color: aliceblue;
 }
-.container{
+.container {
     border-radius: 10px;
     padding: 10px;
     display: flex;
@@ -21,7 +21,7 @@ body{
     text-align: center;
     margin: 10px;
 }
-.users{
+.users {
     background-color: rgba(71, 71, 71, 0.267);
     width: 50vw;
     border-radius: 10px;
@@ -31,14 +31,89 @@ body{
     flex-direction: column;
     text-align: center;
 }
-.users a{
+.users a {
     padding: 5px;
     text-align: center;
     text-decoration: none;
     text-transform: none;
     color: azure;
 }
-.users hr{
+.users hr {
     color: azure;
     width: 10%;
 }
+.chats {
+    background-color: rgba(71, 71, 71, 0.267);
+    width: 50vw;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    text-align: center;
+}
+.chats a {
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: none;
+    color: azure;
+}
+.chats hr {
+    color: azure;
+    width: 10%;
+}
+
+.add-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 30%;
+    background-color: #007bff;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+.add-button span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 50px;
+    font-size: 24px;
+    color: #ffffff;
+}
+  
+
+.popup {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+  
+.popup-content {
+    display: flex;
+    flex-direction: column;
+}
+  
+.popup-content input[type="text"],
+.popup-content select {
+    margin-bottom: 10px;
+}
+  
+.popup-content button {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+  

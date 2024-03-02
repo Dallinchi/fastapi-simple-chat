@@ -21,14 +21,16 @@ class RequestGroupMessage(BaseModel):
 class ResponsePersonalMessage(BaseModel):
     type: str = 'personal-message'
     sender_id: int
+    sender_username: str
     receiver_id: int
     message: str
 
 class ResponseGroupMessage(BaseModel):
     type: str = 'group-message'
-    message: str
     sender_id: int
+    sender_username: str
     chat_id: int
+    message: str
     
 class ChatBase(BaseModel):
     title: str

@@ -10,7 +10,16 @@ router = APIRouter()
 @router.get("/", response_class=HTMLResponse)
 async def render_homepage(request: Request):
     return templates.TemplateResponse(
-        "login.html",
+        "sign-in.html",
+        {
+            "request": request,
+        },
+    )
+
+@router.get("/sign-up", response_class=HTMLResponse)
+async def render_homepage(request: Request):
+    return templates.TemplateResponse(
+        "sign-up.html",
         {
             "request": request,
         },
