@@ -78,7 +78,7 @@ socket.onmessage = async function (event) {
     const sender_id = receivedData.sender_id;
     const sender_username = receivedData.sender_username;
     const chat_id = receivedData.chat_id;
-    const chat_title = await getTitleByChatId(chat_id);
+    const chat_title = getTitleByChatId(chat_id);
     const message = receivedData.message;
 
     const newText = `${sender_username}: ${message}`;
