@@ -1,4 +1,4 @@
-.popup {
+.popupNotification {
     position: fixed;
     top: 10%;
     right: 0;
@@ -17,6 +17,6 @@
     transition: opacity 1s ease-in-out, transform 1s ease-in-out;
 }
 
-.popup.hidden {
+.popupNotification.hidden {
     display: none;
 }
