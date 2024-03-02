@@ -34,7 +34,7 @@ class ChatBase(BaseModel):
     title: str
 
 class ChatCreate(ChatBase):
-    pass
+    users_id: list[int]
 
 class Chat(ChatBase):
     id: int

@@ -37,7 +37,9 @@ def get_chats(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_chat(db: Session, chat: ChatCreate, user:User, users_id: list[int]):
-    db_chat = models.Chat(**chat.dict())
+    db_chat = models.Chat(
+        title=chat.title,
+    )
     users_id.append(user.id)
     users_id = list(set(users_id))
     for user_id in users_id:
