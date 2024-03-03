@@ -22,7 +22,6 @@ fetch('/api/users/me', {
 .then(response => response.json())
 .then(data => {
   sessionStorage.setItem('user', JSON.stringify(data)); // Сохраняем объект data как строку
-  console.log(data)
 })
 .catch(error => {
   console.error('There has been a problem with your fetch operation:', error);
@@ -57,11 +56,16 @@ socket.onopen = function (event) {
   console.log('Соединение установлено');
 };
 
-function appendMessage(newTextDiv) {
+function scrollDown() {
+  chatContainer = document.getElementById('chatContainer')
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+function appendMessage(newTextDiv, message_id) {
+  last_message_id = message_id;
   chatContainer = document.getElementById('chatContainer')
   if (chatContainer.scrollHeight - chatContainer.clientHeight <= chatContainer.scrollTop + 1) {
     chatContainer.appendChild(newTextDiv)
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    scrollDown();
   } else {
     chatContainer.appendChild(newTextDiv)
   }
@@ -90,18 +94,19 @@ socket.onmessage = async function (event) {
   } else if (receivedData.message_type == "group-message") {
     console.log('Получено групповое сообщение');
 
-    const sender_id = receivedData.sender_id;
+    //const sender_id = receivedData.sender_id;
     const sender_username = receivedData.sender_username;
     const chat_id = receivedData.chat_id;
     const chat_title = getTitleByChatId(chat_id);
     const message = receivedData.message;
+    const message_id = receivedData.message_id;
 
     const newText = `${sender_username}: ${message}`;
     const newTextDiv = createDivWithText(newText); // Создаем div с текстом полученым из ответа
     const newNotification = `${chat_title}(${sender_username}): ${message}`;
 
     if (urlParams.type == "group" && chat_id == urlParams.id) {
-      appendMessage(newTextDiv)
+      appendMessage(newTextDiv, message_id)
     } else {
       showPopup(newNotification, 1000)
     }
@@ -149,17 +154,17 @@ function sendMessage() {
     },
     body: JSON.stringify(data)
   })
-    .then(response => {
-      if (response.ok) {
-        document.getElementById('textInput').value = "";
-        return response.json();
-      }
-      throw new Error('Network response was not ok.');
-    })
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => {
-      console.error('There has been a problem with your fetch operation:', error);
-    });
+  .then(response => {
+    if (response.ok) {
+      document.getElementById('textInput').value = "";
+      return response.json();
+    }
+    throw new Error('Network response was not ok.');
+  })
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('There has been a problem with your fetch operation:', error);
+  });
 }
