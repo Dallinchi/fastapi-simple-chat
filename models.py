@@ -25,3 +25,11 @@ class Chat(Base):
     title = Column(String, index=True)
     
     owners = relationship("User", secondary=association_table, back_populates="chats")
+    
+class Message(Base):
+    __tablename__ = 'messages'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    message = Column(String, index=True)
+    chat_id = Column(Integer, ForeignKey('chats.id'))
+    user_id = Column(Integer, ForeignKey('users.id'))

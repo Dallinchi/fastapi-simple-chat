@@ -71,7 +71,7 @@ function appendMessage(newTextDiv) {
 socket.onmessage = async function (event) {
   const receivedData = JSON.parse(event.data);
 
-  if (receivedData.type == "personal-message") {
+  if (receivedData.message_type == "personal-message") {
     console.log('Получено личное сообщение');
 
     const sender_id = receivedData.sender_id;
@@ -87,7 +87,7 @@ socket.onmessage = async function (event) {
     } else {
       showPopup(newNotification, 1000)
     }
-  } else if (receivedData.type == "group-message") {
+  } else if (receivedData.message_type == "group-message") {
     console.log('Получено групповое сообщение');
 
     const sender_id = receivedData.sender_id;
@@ -126,7 +126,7 @@ function sendMessage() {
 
   if (urlParams.type == "group") {
     data = {
-      type: "group-message",
+      message_type: "group-message",
       token: token,
       sender_id: userData.id,
       chat_id: urlParams.id,
@@ -134,7 +134,7 @@ function sendMessage() {
     };
   } else {
     data = {
-      type: "personal-message",
+      message_type: "personal-message",
       token: token,
       sender_id: userData.id,
       receiver_id: urlParams.id,
