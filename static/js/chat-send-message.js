@@ -6,4 +6,3 @@ document.getElementById('textInput').addEventListener('keypress', function(event
     event.preventDefault();
   }
 });
-
