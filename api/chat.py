@@ -30,6 +30,8 @@ async def send_message(
 ):
     payload = jwt.decode(message.token, SECRET_KEY, algorithms=[ALGORITHM])
     sender_id = payload.get("user_id")
+    sender_username = crud.get_user(db, sender_id).username
+    
     match message.type:
         case "personal-message":
             receiver_id = message.receiver_id
@@ -46,7 +48,7 @@ async def send_message(
             message_data = ResponsePersonalMessage(
                 message=message.message,
                 sender_id=sender_id,
-                sender_username=crud.get_user(db, sender_id).username,
+                sender_username=sender_username,
                 receiver_id=receiver_id,
                 # sender_username=sender_username, # в новой схеме этого нет
             ).model_dump()
@@ -62,7 +64,7 @@ async def send_message(
             message_data = ResponseGroupMessage(
                 message=message.message,
                 sender_id=sender_id,
-                sender_username=crud.get_user(db, sender_id).username,
+                sender_username=sender_username,
                 chat_id=message.chat_id,
             ).model_dump()
 
