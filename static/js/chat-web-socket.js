@@ -12,6 +12,21 @@ const socket = new WebSocket('wss://' + window.location.host + '/api/ws?token=' 
     'Custom-Header': 'custom_value'
   }
 });
+fetch('/api/users/me', {
+  method: 'GET',
+  headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+  },
+})
+.then(response => response.json())
+.then(data => {
+  sessionStorage.setItem('user', JSON.stringify(data)); // Сохраняем объект data как строку
+  console.log(data)
+})
+.catch(error => {
+  console.error('There has been a problem with your fetch operation:', error);
+});
 
 function createDivWithText(text) {
   const div = document.createElement('div'); // Создаем новый элемент div
