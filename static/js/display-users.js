@@ -20,19 +20,17 @@ async function displayUsers() {
     users.forEach(user => {
         const userLink = document.createElement('a');
         userLink.textContent = user.username; // Устанавливаем текст элемента div равным переданному аргументу
-        // /chat?id={{users[user]['user_id']}}
         userLink.href = "/chat?type=personal&id=" + user.id; // Устанавливаем текст элемента div равным переданному аргументу
         usersContainer.appendChild(userLink);
     });
     
-    const chats = await getChats();
+    const chats = getChats();
 
     const chatsContainer = document.getElementById('chats-container');
     
     chats.forEach(chat => {
         const chatLink = document.createElement('a');
         chatLink.textContent = chat.title; // Устанавливаем текст элемента div равным переданному аргументу
-        // /chat?id={{users[user]['user_id']}}
         chatLink.href = "/chat?type=group&id=" + chat.id; // Устанавливаем текст элемента div равным переданному аргументу
         chatsContainer.appendChild(chatLink);
     });

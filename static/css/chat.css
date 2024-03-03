@@ -14,10 +14,10 @@ body{
 }
 #chatHead{
     position: fixed;
-    left: 0;
+    left: 10px;
     top: 0;
     right: 0;
-    text-align: center;
+    text-align: left;
     height: 10%;
     z-index: 2;
 }
