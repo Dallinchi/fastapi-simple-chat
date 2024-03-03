@@ -64,7 +64,7 @@ def create_chat_for_user(
 
 
 @router.get('/api/messages/{chat_id:int}')
-def get_messages(chat_id:int,  current_user: Annotated[User, Depends(get_current_active_user)], skip: int, limit: int, db: Session = Depends(get_db)):
+def get_messages(chat_id:int,  current_user: Annotated[User, Depends(get_current_active_user)], skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     user_chats_id = [chat.id for chat in current_user.chats]
     if chat_id not in user_chats_id:        
         raise HTTPException(
