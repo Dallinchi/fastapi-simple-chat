@@ -1,20 +1,20 @@
 function openPopup() {
-    document.getElementById("popup").style.display = "block";
-    fetch('/api/users/')
-    .then(response => response.json())
-    .then(data => {
-      const userList = document.getElementById("userList");
-      userList.innerHTML = '';
-      data.forEach(user => {
-        if (user.id != userData.id) {
-          const option = document.createElement("option");
-          option.value = user.id;
-          option.text = user.username;
-          console.log(user.id == userData.id);
-          userList.appendChild(option);
-        }
-      });
+  document.getElementById("popup").style.display = "block";
+  fetch('/api/users/')
+  .then(response => response.json())
+  .then(data => {
+    const userList = document.getElementById("userList");
+    userList.innerHTML = '';
+    data.forEach(user => {
+      if (user.id != userData.id) {
+        const option = document.createElement("option");
+        option.value = user.id;
+        option.text = user.username;
+        console.log(user.id == userData.id);
+        userList.appendChild(option);
+      }
     });
+  });
 }
 
 function sendChatRequest() {

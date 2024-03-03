@@ -24,7 +24,7 @@ async function displayUsers() {
         usersContainer.appendChild(userLink);
     });
     
-    const chats = await getChats();
+    const chats = getChats();
 
     const chatsContainer = document.getElementById('chats-container');
     
