@@ -15,6 +15,7 @@ class RequestMessage(BaseModel):
 class ResponseMessage(BaseModel):
     message_type: str
     sender_id: int
+    message_id: int
     sender_username: str
     chat_id: int
     message: str

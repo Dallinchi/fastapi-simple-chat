@@ -31,13 +31,6 @@ async def send_message(
     sender_username = crud.get_user(db, sender_id).username
     chat_data = crud.get_chat(db, message.chat_id)
     
-    message_data = ResponseMessage(
-        message_type=message.message_type,
-        message=message.message,
-        sender_id=sender_id,
-        sender_username=sender_username,
-        chat_id=message.chat_id,
-    ).model_dump()
 
     if chat_data is None:
         raise HTTPException(
@@ -45,8 +38,17 @@ async def send_message(
             detail="Not Found",
         )
     
-    crud.create_message(db, message)
+    db_message = crud.create_message(db, message)
 
+    message_data = ResponseMessage(
+        message_type=message.message_type,
+        message_id=db_message.id,
+        message=message.message,
+        sender_id=sender_id,
+        sender_username=sender_username,
+        chat_id=message.chat_id,
+    ).model_dump()
+    
     recipient_users = chat_data.owners
     for recipient_user in recipient_users:
         recipient_user_socket = connected_clients.get(recipient_user.id)
