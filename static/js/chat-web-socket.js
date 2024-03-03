@@ -2,10 +2,7 @@ var urlParams = ofUrl(window.location.href);
 
 // Создаем новое соединение WebSocket
 const token = sessionStorage.getItem('token');
-const userData = JSON.parse(sessionStorage.getItem('user'));
-console.log(" User Data -> " + userData);
-console.log(" User username -> " + userData.username);
-console.log(" User id -> " + userData);
+var userData = JSON.parse(sessionStorage.getItem('user'));
 const socket = new WebSocket('wss://' + window.location.host + '/api/ws?token=' + token, [], {
   headers: {
     'Authorization': 'Bearer ' + token,
@@ -22,6 +19,7 @@ fetch('/api/users/me', {
 .then(response => response.json())
 .then(data => {
   sessionStorage.setItem('user', JSON.stringify(data)); // Сохраняем объект data как строку
+  userData = data;
 })
 .catch(error => {
   console.error('There has been a problem with your fetch operation:', error);
